@@ -1,16 +1,18 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { SessionContext } from "../Context/SessionContext";
+import { UserContext } from "../Context/UserContext";
 
 export const Top = () => {
   const tokenContext = useContext(SessionContext);
+  const nameContext = useContext(UserContext);
 
   return (
     <>
       <h1>トップページ</h1>
       <h3>
         {tokenContext.token
-          ? 'Welcome'
+          ? `Welcome ${nameContext.name}`
           : <NotLogin />
         }
       </h3>

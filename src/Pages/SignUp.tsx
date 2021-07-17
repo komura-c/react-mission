@@ -1,10 +1,15 @@
 import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SessionContext } from "../Context/SessionContext";
-import { createUser } from "../Lib/Apis"
+import { UserContext } from "../Context/UserContext";
+
+import { createUser } from "../Apis/CreateUser"
+
+import { Input } from "../Components/Input";
 
 export const SignUp = () => {
   const tokenContext = useContext(SessionContext);
+  const nameContext = useContext(UserContext);
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -13,67 +18,69 @@ export const SignUp = () => {
 
   const history = useHistory();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    createUser({ name, email, password })
-      .then((res) => {
-        if (res.token) {
-          history.push('/')
-          tokenContext.updateToken(res.token)
-        } else {
-          throw Error('Unknown response error')
-        }
-      })
-      .catch((err: Error) => {
-        console.error(err.message);
-      });
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    try {
+      history.push('/')
+      const { token } = await createUser({ name, email, password });
+      if (!token) {
+        alert('レスポンスエラーです。再度お試しください。');
+        throw Error('Unknown response error');
+      }
+      tokenContext.updateToken(token);
+      nameContext.updateName(name);
+    } catch (error: unknown) {
+      console.error(error);
+    }
     event.preventDefault();
   }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.name === 'name') {
-      setName(event.target.value)
+    if (event.target.id === 'name') {
+      return setName(event.target.value)
     }
-    if (event.target.name === 'email') {
-      setEmail(event.target.value)
+    if (event.target.id === 'email') {
+      return setEmail(event.target.value)
     }
-    if (event.target.name === 'password') {
-      setPassword(event.target.value)
+    if (event.target.id === 'password') {
+      return setPassword(event.target.value)
     }
   }
 
   return (
     <>
       <h1>新規登録画面</h1>
-      <h3>User Token: {tokenContext.token}</h3>
-      <form className="flex flex-col gap-y-1" onSubmit={handleSubmit}>
-        <input
+      <form className="flex flex-col gap-y-2 w-96 mx-auto" onSubmit={handleSubmit}>
+        <Input
           type="text"
-          autoCapitalize="off"
-          name="name"
+          id="name"
           value={name}
+          label="名前"
           placeholder="名無し"
           onChange={handleChange}
-          className="border-black border-2 bg-white focus:outline-none focus:shadow-outline py-2 px-4 rounded-md w-80 mx-auto"
         />
-        <input
+        <Input
           type="email"
-          autoCapitalize="off"
-          name="email"
+          id="email"
           value={email}
-          placeholder="メールアドレス"
+          label="メールアドレス"
+          placeholder="test@test.com"
           onChange={handleChange}
-          className="border-black border-2 bg-white focus:outline-none focus:shadow-outline py-2 px-4 rounded-md w-80 mx-auto"
         />
-        <input
-          type={isMaskPassword ? "password" : "text"}
-          autoCapitalize="off"
-          name="password"
-          value={password}
-          placeholder="パスワード"
-          onChange={handleChange}
-          className="border-black border-2 bg-white focus:outline-none focus:shadow-outline py-2 px-4 rounded-md w-80 mx-auto"
-        />
-        <button type="button" onClick={() => { setIsMaskPassword(isMaskPassword => !isMaskPassword) }}>👀</button>
+        <div className="relative">
+          <Input
+            type={isMaskPassword ? "password" : "text"}
+            id="password"
+            value={password}
+            label="パスワード"
+            placeholder="●●●●●●"
+            onChange={handleChange}
+          />
+          <button type="button"
+            className="absolute right-4 bottom-2 w-4"
+            onClick={() => { setIsMaskPassword(isMaskPassword => !isMaskPassword) }}>
+            {isMaskPassword ? '🚫' : '👁'}
+          </button>
+        </div>
         <button type="submit">送信</button>
       </form>
     </>

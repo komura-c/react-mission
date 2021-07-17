@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import { SessionProvider } from "./Context/SessionContext";
+import { UserProvider } from "./Context/UserContext";
 
 import { Header } from "./Components/Header";
 
@@ -12,20 +13,22 @@ export const App = () => {
   return (
     <Router>
       <SessionProvider>
-        <Header />
-        <div className="pt-6 p-2 text-center">
-          <Switch>
-            <Route path="/" exact>
-              <Top />
-            </Route>
-            <Route path="/signup" exact>
-              <SignUp />
-            </Route>
-            <Route path="/login" exact>
-              <Login />
-            </Route>
-          </Switch>
-        </div>
+        <UserProvider>
+          <Header />
+          <div className="pt-6 p-2 text-center">
+            <Switch>
+              <Route path="/" exact>
+                <Top />
+              </Route>
+              <Route path="/signup" exact>
+                <SignUp />
+              </Route>
+              <Route path="/login" exact>
+                <Login />
+              </Route>
+            </Switch>
+          </div>
+        </UserProvider>
       </SessionProvider>
     </Router>
   );

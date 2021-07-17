@@ -5,12 +5,12 @@ interface SessionContextProps {
   updateToken: (value: string) => void;
 }
 
-const createDefaultUser = (): SessionContextProps => ({
+const createDefaultToken = (): SessionContextProps => ({
   token: '',
   updateToken: value => { }
 });
 
-export const SessionContext = createContext<SessionContextProps>(createDefaultUser());
+export const SessionContext = createContext<SessionContextProps>(createDefaultToken());
 
 export const SessionProvider: FC = props => {
   const [token, setToken] = useState<string>('');
