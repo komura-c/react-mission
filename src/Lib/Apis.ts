@@ -1,18 +1,18 @@
 import axios from "axios";
+interface CreateUserData {
+  name: string,
+  email: string,
+  password: string
+}
 
-export const createUser = (name: string, email: string, password: string) => {
+export const createUser = (createUserData: CreateUserData): Promise<{ token: string }> => {
   const endpoint = `${process.env.REACT_APP_API_ENDPOINT_URL}/users`
-  const postData = {
-    name: "string",
-    email: "string",
-    password: "string"
-  }
   return new Promise((resolve, reject) => {
-    axios.post(endpoint, postData)
-      .then((res) => {
+    axios.post(endpoint, createUserData)
+      .then((res: { data: { token: string } }) => {
         resolve(res.data);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         reject(err);
       });
   });
