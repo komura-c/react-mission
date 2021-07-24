@@ -2,10 +2,20 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { SessionContext } from "../Context/SessionContext";
 import { UserContext } from "../Context/UserContext";
+import { LoadingContext } from "../Context/LoadingContext";
+
+import { Loading } from "../Components/Loading";
 
 export const Top = () => {
   const tokenContext = useContext(SessionContext);
   const nameContext = useContext(UserContext);
+  const isLoadingContext = useContext(LoadingContext);
+
+  if (isLoadingContext.isLoading) {
+    return (
+      <Loading />
+    )
+  }
 
   return (
     <>

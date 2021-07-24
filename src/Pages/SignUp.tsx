@@ -2,14 +2,17 @@ import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { SessionContext } from "../Context/SessionContext";
 import { UserContext } from "../Context/UserContext";
+import { LoadingContext } from "../Context/LoadingContext";
 
 import { createUser } from "../Apis/CreateUser"
 
 import { Input } from "../Components/Input";
+import { Loading } from "../Components/Loading";
 
 export const SignUp = () => {
   const tokenContext = useContext(SessionContext);
   const nameContext = useContext(UserContext);
+  const isLoadingContext = useContext(LoadingContext);
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -18,7 +21,14 @@ export const SignUp = () => {
 
   const history = useHistory();
 
+  if (isLoadingContext.isLoading) {
+    return (
+      <Loading />
+    )
+  }
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    isLoadingContext.updateLoadingStatus(true);
     try {
       history.push('/')
       const { token } = await createUser({ name, email, password });
@@ -30,6 +40,8 @@ export const SignUp = () => {
       nameContext.updateName(name);
     } catch (error: unknown) {
       console.error(error);
+    } finally {
+      isLoadingContext.updateLoadingStatus(false);
     }
     event.preventDefault();
   }
