@@ -1,5 +1,7 @@
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
 import { SessionContext } from "../Contexts/SessionContext";
 import { UserContext } from "../Contexts/UserContext";
 import { LoadingContext } from "../Contexts/LoadingContext";
@@ -10,13 +12,20 @@ import { getUser } from "../Apis/GetUser";
 import { Input } from "../Components/Input";
 import { Loading } from "../Components/Loading";
 
+type IFormValues = {
+  email: string;
+  password: string;
+}
+
 export const Login = () => {
   const tokenContext = useContext(SessionContext);
   const nameContext = useContext(UserContext);
   const isLoadingContext = useContext(LoadingContext);
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const { register, handleSubmit, formState } = useForm<IFormValues>({
+    mode: 'onChange'
+  });
+
   const [isMaskPassword, setIsMaskPassword] = useState<boolean>(true);
 
   const history = useHistory();
@@ -27,15 +36,16 @@ export const Login = () => {
     )
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (formData: IFormValues) => {
+    const { email, password } = formData;
     isLoadingContext.updateLoadingStatus(true);
     try {
-      history.push('/')
       const { token } = await loginUser({ email, password });
       if (!token) {
         alert('レスポンスエラーです。再度お試しください。');
         throw Error('Unknown response error');
       }
+      history.push('/')
       tokenContext.updateToken(token);
       const userData = await getUser(token);
       nameContext.updateName(userData.name);
@@ -44,38 +54,28 @@ export const Login = () => {
     } finally {
       isLoadingContext.updateLoadingStatus(false);
     }
-    event.preventDefault();
-  }
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.id === 'email') {
-      return setEmail(event.target.value)
-    }
-    if (event.target.id === 'password') {
-      return setPassword(event.target.value)
-    }
   }
 
   return (
-    <>
-      <h1>ログイン画面</h1>
-      <form className="flex flex-col gap-y-2 w-96 mx-auto" onSubmit={handleSubmit}>
+    <div className="max-w-md mx-auto">
+      <h1 className="text-xl font-bold my-4">ログイン画面</h1>
+      <form className="flex flex-col gap-y-3" onSubmit={handleSubmit(onSubmit)}>
         <Input
           type="email"
-          id="email"
-          value={email}
+          name="email"
           label="メールアドレス"
           placeholder="test@test.com"
-          onChange={handleChange}
+          register={register}
+          required={true}
         />
         <div className="relative">
           <Input
             type={isMaskPassword ? "password" : "text"}
-            id="password"
-            value={password}
+            name="password"
             label="パスワード"
             placeholder="●●●●●●"
-            onChange={handleChange}
+            register={register}
+            required={true}
           />
           <button type="button"
             className="absolute right-4 bottom-2 w-4"
@@ -83,8 +83,8 @@ export const Login = () => {
             {isMaskPassword ? '🚫' : '👁'}
           </button>
         </div>
-        <button type="submit">送信</button>
+        <button type="submit" disabled={!formState.isValid} className="mt-4 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">送信</button>
       </form>
-    </>
+    </div>
   )
 }

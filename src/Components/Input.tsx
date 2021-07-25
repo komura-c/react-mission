@@ -1,55 +1,46 @@
-import { ChangeEvent, useRef } from "react";
+import { UseFormRegister } from "react-hook-form";
 
-interface InputProps {
-  id: string;
+type InputProps = {
+  name: string;
   placeholder: string;
   label: string;
   type: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  [x: string]: any;
+  register: UseFormRegister<any>;
+  required?: boolean,
+  wrapperClassName?: string,
+  error?: boolean,
+  errorText?: string,
 }
 
 export const Input = (props: InputProps) => {
   const {
-    id,
+    name,
     wrapperClassName = '',
     placeholder = '',
     label = '',
     type = 'text',
-    error = false,
-    errorText = '',
+    register,
     required = false,
-    ...rest
+    errorText = '',
   } = props;
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className={wrapperClassName}>
-      <div
-        className={`border transition duration-150 ease-in-out ${error
-          ? 'focus-within:border-red border-red'
-          : 'focus-within:border-primary border-gray-gray4'
-          }`}
-        onClick={() => inputRef.current?.focus()}
+      <label
+        htmlFor={name}
+        className='block text-left text-base font-medium pl-2 py-1.5'
       >
-        <label
-          htmlFor={id}
-          className='text-base text-left float-left pl-2 text-primary font-normal placeholder-gray-gray4 py-1.5'
-        >
-          {label} {required && <span className='text-red'>*</span>}
-        </label>
-        <input
-          ref={inputRef}
-          type={type}
-          className='w-full px-2.5 pb-1.5 text-primary outline-none text-base font-medium rounded-md'
-          id={id}
-          placeholder={placeholder}
-          {...rest}
-        />
-      </div>
+        {label} {required && <span className='text-red'>*</span>}
+      </label>
+      <input
+        type={type}
+        className='w-full px-2.5 py-1.5 text-base font-medium rounded placeholder-gray-400 border-2 border-black'
+        id={name}
+        placeholder={placeholder}
+        {...register(name, { required })}
+      />
       {errorText && (
-        <p className='text-xs pl-2  text-red mb-4'>{errorText}</p>
+        <p className='pl-2 mb-4 text-xs text-red'>{errorText}</p>
       )}
     </div>
   );
