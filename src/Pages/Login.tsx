@@ -1,8 +1,8 @@
 import { ChangeEvent, FormEvent, useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { SessionContext } from "../Context/SessionContext";
-import { UserContext } from "../Context/UserContext";
-import { LoadingContext } from "../Context/LoadingContext";
+import { SessionContext } from "../Contexts/SessionContext";
+import { UserContext } from "../Contexts/UserContext";
+import { LoadingContext } from "../Contexts/LoadingContext";
 
 import { loginUser } from "../Apis/LoginUser";
 import { getUser } from "../Apis/GetUser";

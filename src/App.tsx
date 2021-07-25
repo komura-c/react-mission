@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import { SessionProvider } from "./Context/SessionContext";
-import { UserProvider } from "./Context/UserContext";
-import { LoadingProvider } from "./Context/LoadingContext";
+import { SessionProvider } from "./Contexts/SessionContext";
+import { UserProvider } from "./Contexts/UserContext";
+import { LoadingProvider } from "./Contexts/LoadingContext";
 
 import { Header } from "./Components/Header";
 
