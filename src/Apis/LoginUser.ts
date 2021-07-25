@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ErrorResponse } from "../Models/ErrorResponse";
 
 interface LoginUserData {
   email: string,
@@ -16,8 +17,8 @@ export const loginUser = (loginUserData: LoginUserData): Promise<LoginUserRespon
       .then((res: { data: LoginUserResponse }) => {
         resolve(res.data);
       })
-      .catch((err: Error) => {
-        reject(err);
+      .catch((err: { response: { data: ErrorResponse } }) => {
+        reject(err.response.data);
       });
   });
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ErrorResponse } from "../Models/ErrorResponse";
 
 interface CreateUserData {
   name: string,
@@ -17,8 +18,8 @@ export const createUser = (createUserData: CreateUserData): Promise<CreateUserRe
       .then((res: { data: CreateUserResponse }) => {
         resolve(res.data);
       })
-      .catch((err: Error) => {
-        reject(err);
+      .catch((err: { response: { data: ErrorResponse } }) => {
+        reject(err.response.data);
       });
   });
 }

@@ -17,7 +17,7 @@ export const App = () => {
         <SessionProvider>
           <UserProvider>
             <Header />
-            <div className="pt-6 p-2 text-center">
+            <div className="pt-6 p-2">
               <Switch>
                 <Route path="/" exact>
                   <Top />
